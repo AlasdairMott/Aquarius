@@ -6,16 +6,34 @@ using System.Threading.Tasks;
 
 using Rhino.UI;
 using Rhino.Display;
+using Rhino.Geometry;
 
 namespace Aquarius.Classes
 {
 	public class MouseSelector : MouseCallback
 	{
-		public event EventHandler<MouseSelectHandler> MousePressed;
+		#region fields
 		private Grid parent;
+		private ZBufferCapture zBufferCapture;
+		private double mouseZDepth;
+		private double mouseDepth;
+		private Point3d mousePoint;
+		private Ray3d ray;
+		#endregion
 
+		#region properties
+		public event EventHandler<MouseSelectHandler> MousePressed;
 		public List<Cell> selected;
+		public ZBufferCapture ZBufferCapture { get { return zBufferCapture; } }
+		public double	MouseZDepth { get { return mouseZDepth; } }
+		public double   MouseDepth { get { return mouseDepth; } }
+		public Point3d  MousePoint { get { return mousePoint; } }
+		public Ray3d	Ray { get { return ray; } }
+		#endregion
+
+		#region constructors
 		public MouseSelector(Grid p) { parent = p; }
+		#endregion
 
 		protected override void OnMouseDown(MouseCallbackEventArgs e)
 		{
@@ -24,8 +42,24 @@ namespace Aquarius.Classes
 
 			if (e.MouseButton == MouseButton.Right){e.Cancel = false; return;}
 
+			zBufferCapture = new ZBufferCapture(e.View.ActiveViewport);
+			mouseZDepth = zBufferCapture.ZValueAt((int)e.ViewportPoint.X, (int)e.ViewportPoint.Y);
+			if (mouseZDepth == 1.0) return;
+
+			//Find position of mouse click in world space
+			Point3d cameraLocation = e.View.ActiveViewport.CameraLocation;
+			mousePoint = zBufferCapture.WorldPointAt((int)e.ViewportPoint.X, (int)e.ViewportPoint.Y);
+			mouseDepth = mousePoint.DistanceTo(cameraLocation);
+			zBufferCapture.Dispose();
+
+			//Create ray
+			Vector3d direction = new Vector3d(mousePoint - cameraLocation);
+			ray = new Ray3d(cameraLocation, direction);
+
+			//Create empty list of canditates
 			selected = new List<Cell>();
 
+			//Invoke selection geometry
 			MouseSelectHandler mouseSelect = new MouseSelectHandler(e.View.ActiveViewport, e.ViewportPoint, e.CtrlKeyDown);
 			MousePressed?.Invoke(this, mouseSelect);
 
