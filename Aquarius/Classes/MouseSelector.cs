@@ -20,8 +20,9 @@ namespace Aquarius.Classes
 		protected override void OnMouseDown(MouseCallbackEventArgs e)
 		{
 			base.OnMouseDown(e);
+			e.Cancel = true;
 
-			if (e.MouseButton == MouseButton.Right) return;
+			if (e.MouseButton == MouseButton.Right){e.Cancel = false; return;}
 
 			selected = new List<Cell>();
 
@@ -30,13 +31,13 @@ namespace Aquarius.Classes
 
 			if (selected.Count > 0)
 			{
-				double min = System.Double.PositiveInfinity;
+				double max = 0;
 				int index_closest = 0;
 				for (int i = 0; i < selected.Count; i++)
 				{
-					if (selected[i].Parameter < min)
+					if (selected[i].Parameter > max)
 					{
-						min = selected[i].Parameter;
+						max = selected[i].Parameter;
 						index_closest = i;
 					}
 				}
@@ -58,6 +59,7 @@ namespace Aquarius.Classes
 				parent.SelectionRetrigger = true;
 				//parent.ExpireSolution(true);
 				e.View.Redraw();
+				e.Cancel = false;
 			}
 		}
 	}

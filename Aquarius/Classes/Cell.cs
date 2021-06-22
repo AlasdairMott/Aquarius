@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Rhino.Geometry;
+using Rhino.Display;
 
 namespace Aquarius.Classes
 {
@@ -65,6 +66,27 @@ namespace Aquarius.Classes
 			Parameter = Rhino.Geometry.Intersect.Intersection.MeshRay(selectionMesh, r);
 			if (Parameter > 0.0)
 			{
+				ZBufferCapture z_depth_capture = new ZBufferCapture(e.viewport);
+				double depth = z_depth_capture.ZValueAt((int)mouse_pt.X, (int)mouse_pt.Y);
+				Point3d depth_point = z_depth_capture.WorldPointAt((int)mouse_pt.X, (int)mouse_pt.Y);
+				z_depth_capture.Dispose();
+
+				if (depth == 1.0) return;
+
+				//Rhino.DocObjects.ObjectAttributes atttributes_1 = new Rhino.DocObjects.ObjectAttributes();
+				//atttributes_1.Name = "depth_pt";
+
+				//Rhino.DocObjects.ObjectAttributes atttributes_2 = new Rhino.DocObjects.ObjectAttributes();
+				//atttributes_2.Name = "viewport_point";
+
+				//Rhino.RhinoDoc.ActiveDoc.Objects.AddPoint(depth_point, atttributes_1);
+				//Rhino.RhinoDoc.ActiveDoc.Objects.AddPoint(viewport_point, atttributes_2);
+
+				double distance_to_zbuffer   = depth_point.DistanceTo(e.viewport.CameraLocation);
+				double distance_to_selection = viewport_point.DistanceTo(e.viewport.CameraLocation);
+
+				if (distance_to_zbuffer < distance_to_selection) return;
+
 				parent.MouseSelector.selected.Add(this);
 			}
 		}
