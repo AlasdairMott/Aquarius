@@ -34,51 +34,29 @@ namespace Aquarius.Classes
 				int index_closest = 0;
 				for (int i = 0; i < selected.Count; i++)
 				{
-					if (selected[i].parameter < min)
+					if (selected[i].Parameter < min)
 					{
-						min = selected[i].parameter;
+						min = selected[i].Parameter;
 						index_closest = i;
 					}
 				}
 
 				if (!e.CtrlKeyDown)
 				{
-					if (parent.selectThroughObjects == true) for (int i = 0; i < selected.Count; i++)
-						{
-							selected[i].selected = true;
-							parent.selectionGeometriesStack.Push(selected[i]);
-						}
-					else
-					{
-						selected[index_closest].selected = true;
-						parent.selectionGeometriesStack.Push(selected[index_closest]);
-					}
-
-
+					selected[index_closest].Activated = true;
+					parent.Active.Add(selected[index_closest]);
 				}
 				else
 				{
-					if (parent.selectThroughObjects == true) for (int i = 0; i < selected.Count; i++)
-						{
-							selected[i].selected = false;
 
-							List<SelectionGeometry> selected_list = parent.selectionGeometriesStack.ToList<SelectionGeometry>();
-							selected_list.Remove(selected[i]);
-							parent.selectionGeometriesStack = new Stack<SelectionGeometry>(selected_list);
-						}
-					else
-					{
-						selected[index_closest].selected = false;
+					selected[index_closest].Activated = false;
 
-						List<SelectionGeometry> selected_list = parent.selectionGeometriesStack.ToList<SelectionGeometry>();
-						selected_list.Remove(selected[index_closest]);
-						parent.selectionGeometriesStack = new Stack<SelectionGeometry>(selected_list);
-					}
-
+					List<Cell> selected_list = parent.Active.ToList<Cell>();
+					parent.Active.Remove(selected[index_closest]);
 				}
 
-				parent.selectionRetrigger = true;
-				parent.ExpireSolution(true);
+				parent.SelectionRetrigger = true;
+				//parent.ExpireSolution(true);
 				e.View.Redraw();
 			}
 		}

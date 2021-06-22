@@ -13,14 +13,18 @@ namespace Aquarius.Classes
 		#region fields
 		private int size;
 		private int count;
-		Cell[,,] array3D;
+		private Cell[,,] array3D;
+		private HashSet<Cell> active;
+		private MouseSelector mouseSelector;
 		#endregion
 
 		#region properties
 		public int Size { get { return size; } }
 		public List<Cell> Cells { get { return array3D.Cast<Cell>().ToList(); } }
+		public HashSet<Cell> Active { get { return active; } set { active = value; } }
 		public List<Brep> DisplayBrep { get { return Cells.Select(o => o.DisplayBrep).ToList(); } }
-		public Classes.MouseSelector mouseSelector;
+		public MouseSelector MouseSelector { get { return mouseSelector; } }
+		public bool SelectionRetrigger;
 		#endregion
 
 		#region constructors
@@ -28,6 +32,7 @@ namespace Aquarius.Classes
 		{
 			size = s;
 			count = c;
+			mouseSelector = new MouseSelector(this);
 
 			array3D = new Cell[c, c, c];
 			for (int i = 0; i < count; i++)
@@ -40,6 +45,17 @@ namespace Aquarius.Classes
 					}
 				}
 			}
+
+			array3D[0, 0, 0].Activated = true;
+
+			active = new HashSet<Cell>();
+		}
+		#endregion
+
+		#region methods
+		public void Unsubscribe() 
+		{
+			Cells.ForEach(x => x.Unsubscribe());
 		}
 		#endregion
 	}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Grasshopper.Kernel;
 using Rhino.Geometry;
@@ -10,7 +11,10 @@ namespace Aquarius
 {
 	public class AquariusGrid : GH_Component
 	{
+		#region fields
 		private Grid grid;
+		private Rhino.Display.DisplayMaterial display_material;
+		#endregion
 
 		/// <summary>
 		/// Initializes a new instance of the AquariusGrid class.
@@ -18,6 +22,7 @@ namespace Aquarius
 		public AquariusGrid()
 		  : base("Aquarius Grid", "AG","Create grid to place components","Aquarius", "Create")
 		{
+			display_material = new Rhino.Display.DisplayMaterial(System.Drawing.Color.Yellow);
 		}
 
 		/// <summary>
@@ -27,6 +32,7 @@ namespace Aquarius
 		{
 			pManager.AddIntegerParameter("Size", "S", "Size of the grid", GH_ParamAccess.item);
 			pManager.AddIntegerParameter("Count", "C", "Number of cells along each dimension", GH_ParamAccess.item);
+			pManager.AddBooleanParameter("Enabled", "E", "Select grid cells enabled", GH_ParamAccess.item);
 		}
 
 		/// <summary>
@@ -45,13 +51,37 @@ namespace Aquarius
 		{
 			int size = 0;
 			int count = 0;
-
 			if (!DA.GetData(0, ref size)) return;
 			if (!DA.GetData(1, ref count)) return;
 
-			grid = new Grid(size, count);
+			bool run = false;
+			if (!DA.GetData("Enabled", ref run)) return;
+
+			if (grid == null) grid = new Grid(size, count);
+
+			if (run) grid.MouseSelector.Enabled = true;
+			else
+			{
+				grid.MouseSelector.Enabled = false;
+				grid.SelectionRetrigger = true;
+			}
 
 			DA.SetData(0, grid);
+
+			if (grid.MouseSelector.Enabled) grid.SelectionRetrigger = false;
+		}
+
+		protected override void AppendAdditionalComponentMenuItems(System.Windows.Forms.ToolStripDropDown menu)
+		{
+			base.AppendAdditionalComponentMenuItems(menu);
+			Menu_AppendItem(menu, "Reset", menu_ResetGrid);
+		}
+
+		private void menu_ResetGrid(object sender, EventArgs e)
+		{
+			grid.Unsubscribe();
+			grid = null;
+			this.ExpireSolution(true); 
 		}
 
 		/// <summary>
@@ -91,6 +121,12 @@ namespace Aquarius
 		public override void DrawViewportMeshes(IGH_PreviewArgs args)
 		{
 			//base.DrawViewportMeshes(args);
+			if (grid != null)
+			{
+				List<Brep> breps = new List<Brep>();
+				grid.Cells.ForEach(x => { if (x.Activated) breps.Add(x.DisplayBrep); });
+				breps.ForEach(x => args.Display.DrawBrepShaded(x, display_material));
+			}
 		}
 
 		public override void DrawViewportWires(IGH_PreviewArgs args)

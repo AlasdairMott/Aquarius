@@ -12,15 +12,16 @@ namespace Aquarius.Classes
 	{
 		#region fields
 		(int, int, int) coordinates;
-		int size;
 		private Brep displayBrep;
 		private Mesh selectionMesh;
 		private Grid parent;
+		private bool activated;
 		#endregion
 
 		#region properties
-		public Brep DisplayBrep {get { return displayBrep; } }
-		public double parameter;
+		public Brep	  DisplayBrep {get { return displayBrep; } }
+		public double Parameter { get; set; }
+		public bool	  Activated { get { return activated; } set { activated = value;} }
 		#endregion
 
 		#region constructors
@@ -35,15 +36,17 @@ namespace Aquarius.Classes
 			selectionMesh = new Mesh();
 			Mesh[] meshes = Mesh.CreateFromBrep(displayBrep, MeshingParameters.FastRenderMesh);
 			foreach (Mesh m in meshes) selectionMesh.Append(m);
+
+			Subscribe();
 		}
 		#endregion
 
 		#region methods
-		public void Subscribe() { parent.mouseSelector.MousePressed += OnMouseDown; }
-		public void Unsubscribe() { parent.mouseSelector.MousePressed -= OnMouseDown; }
+		public void Subscribe() { parent.MouseSelector.MousePressed += OnMouseDown; }
+		public void Unsubscribe() { parent.MouseSelector.MousePressed -= OnMouseDown; }
 		private void OnMouseDown(object sender, MouseSelectHandler e)
 		{
-			if ((selected && !e.remove) || (!selected && e.remove)) return;
+			if ((activated && !e.remove) || (!activated && e.remove)) return;
 
 			//Find Screen Point
 			Point2d mouse_pt = new Point2d(e.point.X, e.point.Y);
@@ -59,10 +62,10 @@ namespace Aquarius.Classes
 			Ray3d r = new Rhino.Geometry.Ray3d(camera_pt, direction);
 
 			//Object selection
-			parameter = Rhino.Geometry.Intersect.Intersection.MeshRay(selectionMesh, r);
-			if (parameter > 0.0)
+			Parameter = Rhino.Geometry.Intersect.Intersection.MeshRay(selectionMesh, r);
+			if (Parameter > 0.0)
 			{
-				parent.mouseSelector.selected.Add(this);
+				parent.MouseSelector.selected.Add(this);
 			}
 		}
 		public Box GetBox()
