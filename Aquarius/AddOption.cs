@@ -11,8 +11,8 @@ namespace Aquarius
 {
 	public class AddOption : GH_Component
 	{
-		private string text;
-		public string Text { get { return text; } }
+		private List<Part> parts;
+		public List<Part> Parts { get { return parts; } }
 
 		/// <summary>
 		/// Each implementation of GH_Component must provide a public 
@@ -21,10 +21,10 @@ namespace Aquarius
 		/// Subcategory the panel. If you use non-existing tab or panel names, 
 		/// new tabs/panels will automatically be created.
 		/// </summary>
-		public AddOption(): base("Aquarius", "AQ","Aquarius Module","Aquarius", "Create")
+		public AddOption(): base("Add Option", "AQ","Add an option to the pool of options","Aquarius", "Create")
 		{
 			//this.ObjectChanged += 
-			text = "";
+			parts = new List<Part>();
 		}
 
 		/// <summary>
@@ -32,7 +32,7 @@ namespace Aquarius
 		/// </summary>
 		protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
 		{
-			pManager.AddTextParameter("Name", "N", "Option Name to appear in dropdown", GH_ParamAccess.item);
+			pManager.AddParameter(new PartParameter(), "Part", "P", "Part to add to the pool", GH_ParamAccess.list);
 			pManager[0].Optional = true;
 		}
 
@@ -81,9 +81,6 @@ namespace Aquarius
 			}
 		}
 
-		//event for plug added? or settings.update()? settings can keep track of all AddOption Components maybe?
-
-
 		/// <summary>
 		/// This is the method that actually does the work.
 		/// </summary>
@@ -91,19 +88,12 @@ namespace Aquarius
 		/// to store data in output parameters.</param>
 		protected override void SolveInstance(IGH_DataAccess DA)
 		{
-			//string text = "";
-			if (!DA.GetData(0, ref text))
+			parts.Clear();
+			if (!DA.GetDataList(0, parts))
 			{
-				text = "";
+				
 				return;
 			}
-
-			Settings.OptionNames.Add(text);
-		}
-
-		protected override void ValuesChanged()
-		{
-			base.ValuesChanged();
 		}
 
 		protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)

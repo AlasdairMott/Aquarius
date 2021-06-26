@@ -25,8 +25,8 @@ namespace Aquarius
 			//}
 			_canvasViewport_handle = new AquariusMenu();
 			_canvasViewport_handle.AddToMenu();
-			
-			
+
+			Settings.UsedParts = new List<Part>();
 		}
 
 		
@@ -82,30 +82,29 @@ namespace Aquarius
 
 	public static class Settings
 	{
+		static public Part ActivePart { get; set; }
 
-		static public List<string> OptionNames { get; set; } = new List<string>();
+		static public List<Part> UsedParts { get; set; }
 
-		static public List<string> ActiveOptionNames 
+		static public List<Part> ActiveParts 
 		{
 			get 
 			{
-				List<string> names = new List<string>();
+				List<Part> parts = new List<Part>();
 				foreach (var v in Grasshopper.Instances.ActiveCanvas.Document.Objects)
 				{
 					if (v.ComponentGuid == new Guid("bd735664-457a-4d7f-9dbe-95f30183a472"))
 					{
 						AddOption addOption = v as AddOption;
-						string text = addOption.Text;
 
-						if (text != "") names.Add(text);
+						parts.AddRange(addOption.Parts);
 
 						//v.ObjectChanged +=
 						//v.
 						//this.Params.Output[0].
-
 					}
 				}
-				return names;
+				return parts;
 			}
 		}
 

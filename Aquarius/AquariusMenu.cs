@@ -193,7 +193,7 @@ namespace Aquarius
         public static Guid BarId => new Guid("{56366e9e-9a32-44c7-a2a6-d701a4e13b07}");
         public WinFormsDockBar() : base(PlugIn.Find(Instances.GrasshopperPluginId), BarId, "Aquarius Controls")
         {
-            SetContentControl(new Forms.UserControl1());
+            SetContentControl(new Forms.AquariusToolBar());
         }
     }
 }

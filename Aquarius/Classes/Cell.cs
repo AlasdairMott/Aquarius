@@ -17,12 +17,34 @@ namespace Aquarius.Classes
 		private Mesh selectionMesh;
 		private Grid parent;
 		private bool activated;
+		private Part part;
 		#endregion
 
 		#region properties
 		public Brep	  DisplayBrep {get { return displayBrep; } }
 		public double Parameter { get; set; }
 		public bool	  Activated { get { return activated; } set { activated = value;} }
+		public List<GeometryBase> PartGeometry 
+		{ 
+			get 
+			{
+				if (part == null) return null;
+
+				Vector3d vector = new Vector3d(GetBox().Center);
+				Transform transform = Transform.Translation(vector);
+
+				List<GeometryBase> shifted_geometry = new List<GeometryBase>();
+				foreach (GeometryBase geo in part.Geometry) 
+				{
+					GeometryBase g = geo.Duplicate();
+					g.Transform(transform);
+					shifted_geometry.Add(g);
+				}
+
+				return shifted_geometry;
+			} 
+		}
+		public Part Part => part;
 		#endregion
 
 		#region constructors
@@ -63,15 +85,20 @@ namespace Aquarius.Classes
 
 				parent.MouseSelector.selected.Add(this);
 			}
+
+			part = Settings.ActivePart;
+			
 		}
 		public Box GetBox()
 		{
-			Interval x = new Interval(0, parent.Size);
-			Interval y = new Interval(0, parent.Size);
-			Interval z = new Interval(0, parent.Size);
+			Interval x = new Interval(0, parent.CellWidth);
+			Interval y = new Interval(0, parent.CellWidth);
+			Interval z = new Interval(0, parent.CellHeight);
 
 			Plane plane = Plane.WorldXY;
-			plane.Origin = (new Point3d(coordinates.Item1, coordinates.Item2, coordinates.Item3)) * parent.Size;
+			plane.Origin = (new Point3d(coordinates.Item1 * parent.CellWidth, 
+										coordinates.Item2 * parent.CellWidth,
+										coordinates.Item3 * parent.CellHeight));
 
 			Box b = new Box(plane, x, y, z);
 			return b;

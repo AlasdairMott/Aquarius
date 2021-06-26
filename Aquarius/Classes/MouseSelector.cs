@@ -19,6 +19,7 @@ namespace Aquarius.Classes
 		private double mouseDepth;
 		private Point3d mousePoint;
 		private Ray3d ray;
+		private AquariusGrid parentComponent;
 		#endregion
 
 		#region properties
@@ -67,6 +68,7 @@ namespace Aquarius.Classes
 			{
 				double max = 0;
 				int index_closest = 0;
+
 				for (int i = 0; i < selected.Count; i++)
 				{
 					if (selected[i].Parameter > max)
@@ -83,18 +85,25 @@ namespace Aquarius.Classes
 				}
 				else
 				{
-
 					selected[index_closest].Activated = false;
 
 					List<Cell> selected_list = parent.Active.ToList<Cell>();
 					parent.Active.Remove(selected[index_closest]);
 				}
 
+				Settings.UsedParts.Add(selected[index_closest].Part);
+
 				parent.SelectionRetrigger = true;
-				//parent.ExpireSolution(true);
+				parentComponent.ExpireSolution(true);
+
 				e.View.Redraw();
 				e.Cancel = false;
 			}
+		}
+
+		internal void AttachGHComponent(AquariusGrid parentComponent)
+		{
+			this.parentComponent = parentComponent;
 		}
 	}
 

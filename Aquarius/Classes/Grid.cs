@@ -11,7 +11,8 @@ namespace Aquarius.Classes
 	public class Grid
 	{
 		#region fields
-		private int size;
+		private int cellWidth;
+		private int cellHeight;
 		private int count;
 		private Cell[,,] array3D;
 		private HashSet<Cell> active;
@@ -19,7 +20,8 @@ namespace Aquarius.Classes
 		#endregion
 
 		#region properties
-		public int Size { get { return size; } }
+		public int CellWidth => cellWidth;
+		public int CellHeight => cellHeight;
 		public List<Cell> Cells { get { return array3D.Cast<Cell>().ToList(); } }
 		public HashSet<Cell> Active { get { return active; } set { active = value; } }
 		public List<Brep> DisplayBrep { get { return Cells.Select(o => o.DisplayBrep).ToList(); } }
@@ -28,13 +30,15 @@ namespace Aquarius.Classes
 		#endregion
 
 		#region constructors
-		public Grid(int s, int c) 
+		public Grid(int cellWidth, int cellHeight, int count) 
 		{
-			size = s;
-			count = c;
+			this.cellWidth = cellWidth;
+			this.cellHeight = cellHeight;
+			this.count = count;
+
 			mouseSelector = new MouseSelector(this);
 
-			array3D = new Cell[c, c, c];
+			array3D = new Cell[count, count, count];
 			for (int i = 0; i < count; i++)
 			{
 				for (int j = 0; j < count; j++) 

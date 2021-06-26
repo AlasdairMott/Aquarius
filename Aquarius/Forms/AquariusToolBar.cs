@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Aquarius.Forms
 {
-	public partial class UserControl1 : UserControl
+	public partial class AquariusToolBar : UserControl
 	{
-		public UserControl1()
+		public AquariusToolBar()
 		{
 			InitializeComponent();
 		}
@@ -24,8 +24,16 @@ namespace Aquarius.Forms
 
 		private void updateDropdown(object sender, EventArgs e)
 		{
-			PartPicker.Items.Clear();
-			PartPicker.Items.AddRange(Settings.ActiveOptionNames.ToArray<object>());
+			partPicker.Items.Clear();
+
+			List<string> partNames = Settings.ActiveParts.Select(o => o.Name).ToList();
+
+			partPicker.Items.AddRange(partNames.ToArray<object>());
+		}
+
+		private void selectedPart(object sender, EventArgs e)
+		{
+			Settings.ActivePart = Settings.ActiveParts[partPicker.SelectedIndex];
 		}
 	}
 }

@@ -8,7 +8,6 @@ namespace Aquarius
 {
 	public class GetOptions : GH_Component
 	{
-		private int count;
 		private bool subscribed;
 
 		/// <summary>
@@ -17,7 +16,6 @@ namespace Aquarius
 		public GetOptions()
 		  : base("Get Options", "G","Get the list of all options","Aquarius", "Create")
 		{
-			count = 0;
 			subscribed = false;
 		}
 
@@ -72,8 +70,7 @@ namespace Aquarius
 		/// </summary>
 		protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
 		{
-			pManager.AddTextParameter("Options", "O", "Global options specified", GH_ParamAccess.list);
-			pManager.AddNumberParameter("Number", "N", "Number of active instances", GH_ParamAccess.item);
+			pManager.AddParameter(new PartParameter());
 		}
 
 		/// <summary>
@@ -82,11 +79,9 @@ namespace Aquarius
 		/// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
 		protected override void SolveInstance(IGH_DataAccess DA)
 		{
-			DA.SetDataList(0, Settings.ActiveOptionNames);
-
 			if (!subscribed) Subscribe(true);
 
-			DA.SetData(1, count);
+			DA.SetDataList(0, Settings.ActiveParts);
 		}
 
 		/// <summary>
