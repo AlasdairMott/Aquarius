@@ -71,6 +71,8 @@
     <Compile Include="AquariusMenu.cs" />
     <Compile Include="Classes\Cell.cs" />
     <Compile Include="CreatePart.cs" />
+    <Compile Include="DecomposeCell.cs" />
+    <Compile Include="DecomposeGrid.cs" />
     <Compile Include="Forms\AquariusToolBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -117,6 +119,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ViewPool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExplodeGrid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RandomChoice.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RandomRotate.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Rotate.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

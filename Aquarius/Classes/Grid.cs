@@ -17,6 +17,7 @@ namespace Aquarius.Classes
 		private Cell[,,] array3D;
 		private HashSet<Cell> active;
 		private MouseSelector mouseSelector;
+		private Random random;
 		#endregion
 
 		#region properties
@@ -27,6 +28,7 @@ namespace Aquarius.Classes
 		public List<Brep> DisplayBrep { get { return Cells.Select(o => o.DisplayBrep).ToList(); } }
 		public MouseSelector MouseSelector { get { return mouseSelector; } }
 		public bool SelectionRetrigger;
+		public Random Random => random;
 		#endregion
 
 		#region constructors
@@ -35,6 +37,8 @@ namespace Aquarius.Classes
 			this.cellWidth = cellWidth;
 			this.cellHeight = cellHeight;
 			this.count = count;
+
+			this.random = new Random();
 
 			mouseSelector = new MouseSelector(this);
 

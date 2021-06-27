@@ -48,11 +48,12 @@ namespace Aquarius
                 DockLocation = DockBarDockLocation.Floating,
                 Visible = false,
                 DockStyle = DockBarDockStyle.Any,
-                FloatPoint = new System.Drawing.Point(200, 20)
+                FloatPoint = new System.Drawing.Point(200, 200)
             };
 
             _canvasViewport = new WinFormsDockBar();
             _canvasViewport.Create(create_options);
+            _canvasViewport.ResizeFloating(new System.Drawing.Size(200, 20));
         }
 
         public void AddToMenu()
@@ -195,5 +196,6 @@ namespace Aquarius
         {
             SetContentControl(new Forms.AquariusToolBar());
         }
+        
     }
 }

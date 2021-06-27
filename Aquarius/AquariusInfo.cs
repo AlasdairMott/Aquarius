@@ -13,7 +13,7 @@ namespace Aquarius
 	public class AquariusInfo : GH_AssemblyInfo
 	{
 		static AquariusMenu _canvasViewport_handle;
-		
+
 
 		//public bool IsToolbarVisible { get { return _canvasViewport.IsVisible; } }
 
@@ -27,6 +27,8 @@ namespace Aquarius
 			_canvasViewport_handle.AddToMenu();
 
 			Settings.UsedParts = new List<Part>();
+			Settings.ActiveCell = null;
+			Settings.RandomChoice = false;
 		}
 
 		
@@ -82,6 +84,8 @@ namespace Aquarius
 
 	public static class Settings
 	{
+		static public Classes.Cell ActiveCell { get; set; }
+
 		static public Part ActivePart { get; set; }
 
 		static public List<Part> UsedParts { get; set; }
@@ -107,6 +111,8 @@ namespace Aquarius
 				return parts;
 			}
 		}
+
+		static public bool RandomChoice { get; set; }
 
 	}
 

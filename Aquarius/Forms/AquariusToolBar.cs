@@ -35,5 +35,17 @@ namespace Aquarius.Forms
 		{
 			Settings.ActivePart = Settings.ActiveParts[partPicker.SelectedIndex];
 		}
+
+		private void RotateCell(object sender, EventArgs e)
+		{
+			if (Settings.ActiveCell == null) return;
+			Settings.ActiveCell.Spin += 1;
+			Settings.ActiveCell.Parent.MouseSelector.ParentComponent.ExpireSolution(true);
+		}
+
+		private void ToggleRandom(object sender, EventArgs e)
+		{
+			Settings.RandomChoice = !Settings.RandomChoice;
+		}
 	}
 }

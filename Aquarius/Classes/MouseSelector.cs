@@ -24,6 +24,7 @@ namespace Aquarius.Classes
 
 		#region properties
 		public event EventHandler<MouseSelectHandler> MousePressed;
+		public AquariusGrid ParentComponent => parentComponent;
 		public List<Cell> selected;
 		public ZBufferCapture ZBufferCapture { get { return zBufferCapture; } }
 		public double	MouseZDepth { get { return mouseZDepth; } }
@@ -45,7 +46,7 @@ namespace Aquarius.Classes
 
 			zBufferCapture = new ZBufferCapture(e.View.ActiveViewport);
 			mouseZDepth = zBufferCapture.ZValueAt((int)e.ViewportPoint.X, (int)e.ViewportPoint.Y);
-			if (mouseZDepth == 1.0) return;
+			//if (mouseZDepth == 1.0) return;
 
 			//Find position of mouse click in world space
 			Point3d cameraLocation = e.View.ActiveViewport.CameraLocation;
@@ -82,16 +83,14 @@ namespace Aquarius.Classes
 				{
 					selected[index_closest].Activated = true;
 					parent.Active.Add(selected[index_closest]);
+					Settings.UsedParts.Add(selected[index_closest].Part);
+					Settings.ActiveCell = selected[index_closest];
 				}
 				else
 				{
 					selected[index_closest].Activated = false;
-
-					List<Cell> selected_list = parent.Active.ToList<Cell>();
 					parent.Active.Remove(selected[index_closest]);
 				}
-
-				Settings.UsedParts.Add(selected[index_closest].Part);
 
 				parent.SelectionRetrigger = true;
 				parentComponent.ExpireSolution(true);
